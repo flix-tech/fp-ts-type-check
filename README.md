@@ -33,7 +33,7 @@ Parsers for some complex structures you'd want to validate are composed from sma
 import * as P from 'fp-ts-type-check';
 
 interface ShoppingListItem {
-	name: string;
+  name: string;
   amount: { count: number; unit: string };
   comment?: string;
 }
