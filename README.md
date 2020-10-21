@@ -40,14 +40,13 @@ import * as P from 'fp-ts-type-check';
 
 interface ShoppingListItem {
   name: string;
-  amount: { count: number; unit: string };
-  comment?: string;
+  amount: { count: number; unit?: string };
 }
 const shoppingListItemParser: P.Parser<ShoppingListItem> = P.type({
   name: P.string,
   amount: P.type({
     count: P.number,
-    unit: P.nullable(P.string),
+    unit: P.optional(P.string),
   }),
 });
 
@@ -63,19 +62,19 @@ You can reuse your parsers to construct parsers for even bigger structures:
 ```typescript
 type ShoppingList = array<ShoppingListItem>;
 
-const shoppingListParser: P.Parser<ShoppingList> = P.array(shoppingListItemParser);
+const shoppingListParser: P.Parser<ShoppingList> = P.arrayOf(shoppingListItemParser);
 
 const validShoppingList = [
   {name: "Apple", amount: {count: 5}},
   {name: "Milk", amount: {count: 500, unit: 'ml'}},
 ];
-shoppingListItem(validShoppingList); // Right<ShoppingList>(...)
+shoppingListParser(validShoppingList); // Right<ShoppingList>(...)
 
 const invalidShoppingList = [
   {name: "Apple", amount: {count: 5}},
   {name: "Milk", amount: {unit: 'ml'}}, // No count here
 ];
-shoppingListItem(invalidShoppingList); // Left<ParseError>({path: "[1].amount.count", message: "expected number, got undefined"})
+shoppingListParser(invalidShoppingList); // Left<ParseError>({path: "[1].amount.count", message: "expected number, got undefined"})
 ```
 
 # API documentation
