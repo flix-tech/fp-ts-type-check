@@ -10,7 +10,13 @@ Features:
 
 ## Installation
 
-TBD
+To install the stable version:
+
+```
+npm install fp-ts-type-check ~0.2.0
+```
+
+While the major version number is 0 changes in minor version number bay break backward compatibility so you should stick to a fixed minor version.
 
 ## Usage
 
@@ -88,9 +94,9 @@ shoppingListItem(invalidShoppingList); // Left<ParseError>({path: "[1].amount.co
 
 * `type<A>(propertyParsers: { [K in keyof A]: Parser<A[K]> }): Parser<A>` - checks that values is an object and validates each it's property with corresponding parser.
 
-* `array<A>(parseBody: Parser<A>): Parser<A[]>` - checks that value is an array and every item matches  `parseBody` parser.
+* `arrayOf<A>(parseBody: Parser<A>): Parser<A[]>` - checks that value is an array and every item matches  `parseBody` parser.
 
-* `nullable<A>(parseBody: Parser<A>): Parser<A | undefined>` - checks that value is either undefined or matches `parseBody` parser.
+* `optional<A>(parseBody: Parser<A>): Parser<A | undefined>` - checks that value is either undefined or matches `parseBody` parser.
 
 * `discriminatedUnion<A extends {type: string;}>(parsers: {(type value): (type parser)}): Parser<A>` - checks that value is a [discriminated union](https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions) with discriminant in `type` property. Example usage:
 

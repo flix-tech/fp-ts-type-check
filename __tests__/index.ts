@@ -49,8 +49,8 @@ describe('Type guards', () => {
   });
 });
 
-describe('Nullable string parser', () => {
-  isChecksSampleValues(P.nullable(P.string), values, key =>
+describe('Optional string parser', () => {
+  isChecksSampleValues(P.optional(P.string), values, key =>
     ['string', 'undefined'].includes(key)
   );
 });
@@ -63,7 +63,7 @@ describe('String array parser', () => {
     'an array with numbers': [42, 43],
     'an array with mixed types': ['foo', 42],
   };
-  const parser = P.array<string>(P.string);
+  const parser = P.arrayOf<string>(P.string);
   isChecksSampleValues(parser, sampleArrays, key =>
     ['valid', 'empty'].includes(key)
   );

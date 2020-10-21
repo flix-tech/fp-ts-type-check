@@ -139,7 +139,7 @@ export const type = <A, IN = unknown>(
   );
 
 // Validator for optional values
-export const nullable = <A>(parseBody: Parser<A>): Parser<A | undefined> => x =>
+export const optional = <A>(parseBody: Parser<A>): Parser<A | undefined> => x =>
   pipe(
     O.fromNullable(x),
     O.fold<unknown, ParseResult<A | undefined>>(
@@ -149,7 +149,7 @@ export const nullable = <A>(parseBody: Parser<A>): Parser<A | undefined> => x =>
   );
 
 // Validates that x is array of type A
-export const array = <A>(parseBody: Parser<A>): Parser<A[]> => x =>
+export const arrayOf = <A>(parseBody: Parser<A>): Parser<A[]> => x =>
   Array.isArray(x)
     ? traverseParsers(x, parseBody)
     : E.left(parseError('expected array, got' + typeof x));

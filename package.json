@@ -1,6 +1,6 @@
 {
   "name": "@flix-tech/fp-ts-type-check",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Type validation in runtime",
   "license": "MIT",
   "author": "FlixMobility Tech",
