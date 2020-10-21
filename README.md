@@ -13,7 +13,7 @@ Features:
 To install the stable version:
 
 ```
-npm install fp-ts-type-check ~0.2.0
+npm install '@flix-tech/fp-ts-type-check@~0.2.0'
 ```
 
 While the major version number is 0 changes in minor version number bay break backward compatibility so you should stick to a fixed minor version.
