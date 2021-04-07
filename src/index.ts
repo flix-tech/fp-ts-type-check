@@ -16,7 +16,9 @@ const addKeyPrefix = (part: string) => (err: ParseError): ParseError => ({
   path: `.${part}${err.path}`,
   message: err.message,
 });
-const addIndexPrefix = (index: string|number) => (err: ParseError): ParseError => ({
+const addIndexPrefix = (index: string | number) => (
+  err: ParseError
+): ParseError => ({
   path: `[${index}]${err.path}`,
   message: err.message,
 });
@@ -32,7 +34,7 @@ const traverseParsers = <A>(
   parser: Parser<A>
 ): ParseResult<A[]> => {
   const results: A[] = [];
-  for (let index in xs) {
+  for (const index in xs) {
     const result = parser(xs[index]);
     if (E.isLeft(result)) {
       return E.mapLeft(addIndexPrefix(index))(result);
@@ -42,7 +44,7 @@ const traverseParsers = <A>(
   }
 
   return E.right(results);
-}
+};
 
 type TypeName<T> = T extends string
   ? 'string'
@@ -72,12 +74,12 @@ export const boolean = typeParser<boolean>('boolean');
 export const number = typeParser<number>('number');
 export const object = (x: unknown) =>
   x === null
-  ? E.left(parseError('expected object, got null'))
-  : typeGuard<Record<string, unknown>>('object', x)
-  ? E.right(x)
-  : E.left(parseError('expected object, got ' + typeof x));
+    ? E.left(parseError('expected object, got null'))
+    : typeGuard<Record<string, unknown>>('object', x)
+    ? E.right(x)
+    : E.left(parseError('expected object, got ' + typeof x));
 
-export const any: Parser<any> = E.right
+export const any: Parser<any> = E.right;
 
 // Validates that x matches exactly one value
 export const exact = <A>(expected: A): Parser<A> => x =>
