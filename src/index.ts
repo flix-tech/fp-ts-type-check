@@ -16,7 +16,7 @@ const addKeyPrefix = (part: string) => (err: ParseError): ParseError => ({
   path: `.${part}${err.path}`,
   message: err.message,
 });
-const addIndexPrefix = (index: number) => (err: ParseError): ParseError => ({
+const addIndexPrefix = (index: string|number) => (err: ParseError): ParseError => ({
   path: `[${index}]${err.path}`,
   message: err.message,
 });
@@ -30,21 +30,19 @@ export type Parser<OUT, IN = unknown> = {
 const traverseParsers = <A>(
   xs: unknown[],
   parser: Parser<A>
-): ParseResult<A[]> =>
-  xs.reduce<ParseResult<A[]>>(
-    (acc: ParseResult<A[]>, x: unknown, index: number): ParseResult<A[]> =>
-      pipe(
-        acc,
-        E.chain(accRight =>
-          pipe(
-            parser(x),
-            E.mapLeft(addIndexPrefix(index)),
-            E.map(rightX => [...accRight, rightX])
-          )
-        )
-      ),
-    E.right([])
-  );
+): ParseResult<A[]> => {
+  const results: A[] = [];
+  for (let index in xs) {
+    const result = parser(xs[index]);
+    if (E.isLeft(result)) {
+      return E.mapLeft(addIndexPrefix(index))(result);
+    }
+
+    results.push(result.right);
+  }
+
+  return E.right(results);
+}
 
 type TypeName<T> = T extends string
   ? 'string'
