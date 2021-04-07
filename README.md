@@ -85,6 +85,7 @@ shoppingListParser(invalidShoppingList); // Left<ParseError>({path: "[1].amount.
 * `boolean(): Parser<boolean>` - checks that value is boolean.
 * `number(): Parser<number>` - checks that value is number.
 * `object(): Parser<object>` - checks that value is any object.
+* `any(): Parser<any>` - does not check anything.
 * `exact<A>(expected: A): Parser<A>` - checks that value is same as expected one.
 * `oneOf<A>(allowed: A[]): Parser<A>` - checks that value is one of allowed ones.
 * `keyOf<A extends object>(allowed: A): Parser<keyof A>` - checks that value is string and also is a key of object `allowed`.
@@ -96,6 +97,8 @@ shoppingListParser(invalidShoppingList); // Left<ParseError>({path: "[1].amount.
 * `arrayOf<A>(parseBody: Parser<A>): Parser<A[]>` - checks that value is an array and every item matches  `parseBody` parser.
 
 * `optional<A>(parseBody: Parser<A>): Parser<A | undefined>` - checks that value is either undefined or matches `parseBody` parser.
+
+* `nullable<A>(parseBody: Parser<A>): Parser<A | null>` - checks that value is either null or matches `parseBody` parser.
 
 * `discriminatedUnion<A extends {type: string;}>(parsers: {(type value): (type parser)}): Parser<A>` - checks that value is a [discriminated union](https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions) with discriminant in `type` property. Example usage:
 
