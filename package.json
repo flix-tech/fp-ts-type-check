@@ -1,9 +1,10 @@
 {
   "name": "@flix-tech/fp-ts-type-check",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Type validation in runtime",
   "license": "MIT",
   "author": "FlixMobility Tech",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flix-tech/fp-ts-type-check.git"

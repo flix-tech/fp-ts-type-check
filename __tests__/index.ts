@@ -11,6 +11,7 @@ const values = {
   boolean: true,
   object: { foo: 42 },
   undefined: undefined,
+  null: null,
 };
 
 const isChecksSampleValues = <A>(
@@ -47,11 +48,20 @@ describe('Type guards', () => {
   describe('object parser', () => {
     isChecksSampleValues(P.object, values, key => key === 'object');
   });
+  describe('any parser', () => {
+    isChecksSampleValues(P.any, values, () => true);
+  });
 });
 
 describe('Optional string parser', () => {
   isChecksSampleValues(P.optional(P.string), values, key =>
     ['string', 'undefined'].includes(key)
+  );
+});
+
+describe('Nullable string parser', () => {
+  isChecksSampleValues(P.nullable(P.string), values, key =>
+    ['string', 'null'].includes(key)
   );
 });
 

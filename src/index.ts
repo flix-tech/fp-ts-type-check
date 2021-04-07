@@ -16,7 +16,9 @@ const addKeyPrefix = (part: string) => (err: ParseError): ParseError => ({
   path: `.${part}${err.path}`,
   message: err.message,
 });
-const addIndexPrefix = (index: number) => (err: ParseError): ParseError => ({
+const addIndexPrefix = (index: string | number) => (
+  err: ParseError
+): ParseError => ({
   path: `[${index}]${err.path}`,
   message: err.message,
 });
@@ -30,21 +32,19 @@ export type Parser<OUT, IN = unknown> = {
 const traverseParsers = <A>(
   xs: unknown[],
   parser: Parser<A>
-): ParseResult<A[]> =>
-  xs.reduce<ParseResult<A[]>>(
-    (acc: ParseResult<A[]>, x: unknown, index: number): ParseResult<A[]> =>
-      pipe(
-        acc,
-        E.chain(accRight =>
-          pipe(
-            parser(x),
-            E.mapLeft(addIndexPrefix(index)),
-            E.map(rightX => [...accRight, rightX])
-          )
-        )
-      ),
-    E.right([])
-  );
+): ParseResult<A[]> => {
+  const results: A[] = [];
+  for (const index in xs) {
+    const result = parser(xs[index]);
+    if (E.isLeft(result)) {
+      return E.mapLeft(addIndexPrefix(index))(result);
+    }
+
+    results.push(result.right);
+  }
+
+  return E.right(results);
+};
 
 type TypeName<T> = T extends string
   ? 'string'
@@ -56,7 +56,9 @@ type TypeName<T> = T extends string
   ? 'undefined'
   : T extends (...p: any[]) => any
   ? 'function'
-  : 'object';
+  : T extends object
+  ? 'object'
+  : 'unknown';
 
 const typeGuard = <A>(typeName: TypeName<A>, x: unknown): x is A =>
   typeof x === typeName;
@@ -70,7 +72,14 @@ const typeParser = <A, IN = unknown>(
 export const string = typeParser<string>('string');
 export const boolean = typeParser<boolean>('boolean');
 export const number = typeParser<number>('number');
-export const object = typeParser<Record<string, unknown>>('object');
+export const object = (x: unknown) =>
+  x === null
+    ? E.left(parseError('expected object, got null'))
+    : typeGuard<Record<string, unknown>>('object', x)
+    ? E.right(x)
+    : E.left(parseError('expected object, got ' + typeof x));
+
+export const any: Parser<any> = E.right;
 
 // Validates that x matches exactly one value
 export const exact = <A>(expected: A): Parser<A> => x =>
@@ -140,13 +149,10 @@ export const type = <A, IN = unknown>(
 
 // Validator for optional values
 export const optional = <A>(parseBody: Parser<A>): Parser<A | undefined> => x =>
-  pipe(
-    O.fromNullable(x),
-    O.fold<unknown, ParseResult<A | undefined>>(
-      () => E.right(undefined),
-      parseBody
-    )
-  );
+  x === undefined ? E.right(undefined) : parseBody(x);
+
+export const nullable = <A>(parseBody: Parser<A>): Parser<A | null> => x =>
+  x === null ? E.right(null) : parseBody(x);
 
 // Validates that x is array of type A
 export const arrayOf = <A>(parseBody: Parser<A>): Parser<A[]> => x =>
