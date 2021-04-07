@@ -4,6 +4,7 @@
   "description": "Type validation in runtime",
   "license": "MIT",
   "author": "FlixMobility Tech",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flix-tech/fp-ts-type-check.git"
